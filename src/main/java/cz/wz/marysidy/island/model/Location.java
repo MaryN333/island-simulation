@@ -35,6 +35,7 @@ public class Location {
 
     public void addAnimal(Animal animal){
         animals.add(animal);
+        animal.moveTo(this);
     }
     public void removeAnimal(Animal animal){
         animals.remove(animal);
@@ -42,6 +43,7 @@ public class Location {
 
     public void addPlant(Plant plant){
         plants.add(plant);
+        plant.setLocation(this);
     }
     public void removePlant(Plant plant){
         plants.remove(plant);
