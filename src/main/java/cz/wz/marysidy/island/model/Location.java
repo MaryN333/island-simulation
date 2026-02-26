@@ -33,10 +33,20 @@ public class Location {
         return plants;
     }
 
-    public void addAnimal(Animal animal){
+    public boolean addAnimal(Animal animal){
+        long count = animals.stream()
+                .filter(a -> a.getClass() == animal.getClass())
+                .count();
+
+        if (count >= animal.getMaxCountPerLocation()) {
+            return false;
+        }
+
         animals.add(animal);
         animal.moveTo(this);
+        return true;
     }
+
     public void removeAnimal(Animal animal){
         animals.remove(animal);
     }
