@@ -1,5 +1,9 @@
 package cz.wz.marysidy.island.model;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class Island {
     private final int width;
     private final int height;
@@ -13,7 +17,6 @@ public class Island {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 locations[y][x] = new Location(x, y);
-
             }
         }
     }
@@ -41,7 +44,47 @@ public class Island {
         return x >= 0 && x < width && y >= 0 && y < height;
     }
 
-    public void movePhase(){}
+    public void movePhase(){
+        // Stage 1 - intentions
+        Map<Animal, int[]> moveIntents = new HashMap<>();
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                Location location = locations[y][x];
+                List<Animal> animals = location.getAnimals();
+
+                for (Animal animal : animals) {
+                    if (!animal.isAlive()) continue;
+
+                    MoveIntent intent = animal.decideMove();
+                    int targetX = x + intent.getDx();
+                    int targetY = y + intent.getDy();
+
+                    moveIntents.put(animal, new int[]{targetX, targetY});
+                }
+            }
+        }
+
+        // Stage 2 — mooving
+        for (Map.Entry<Animal, int[]> entry : moveIntents.entrySet()) {
+            Animal animal = entry.getKey();
+            int targetX = entry.getValue()[0];
+            int targetY = entry.getValue()[1];
+
+            if (!isValidCoordinate(targetX, targetY)) {
+                continue; // doesn`t move
+            }
+
+            Location currentLocation = animal.getLocation();
+            Location targetLocation = getLocation(targetX, targetY);
+
+            boolean added = targetLocation.addAnimal(animal);
+            if (added) {
+                currentLocation.removeAnimal(animal);
+            }
+        }
+    }
+
     public void eatPhase(){}
     public void reproducePhase(){}
 
