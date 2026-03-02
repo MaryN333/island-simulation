@@ -26,7 +26,6 @@ public abstract class Predator extends Animal {
 
             if (probability > 0 && tryToEat(probability)) {
                 candidate.die();
-                location.removeAnimal(candidate);
                 restoreFood(candidate.getWeight());
                 break;
             }

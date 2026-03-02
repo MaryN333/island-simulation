@@ -1,6 +1,5 @@
 package cz.wz.marysidy.island.model;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -92,7 +91,8 @@ public class Island {
 
                 Location location = locations[y][x];
 
-                List<Animal> animalsCopy = new ArrayList<>(location.getAnimals());
+//                List<Animal> animalsCopy = new ArrayList<>(location.getAnimals());
+                List<Animal> animalsCopy = location.getAnimals();
 
                 for (Animal animal : animalsCopy) {
                     if (!animal.isAlive()) {
@@ -108,19 +108,24 @@ public class Island {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 Location location = locations[y][x];
-                List<Animal> animalsCopy = new ArrayList<>(location.getAnimals());
+//                List<Animal> animalsCopy = new ArrayList<>(location.getAnimals());
+                List<Animal> animalsCopy = location.getAnimals();
 
                 for (Animal animal : animalsCopy) {
                     animal.applyMetabolism();
-
-                    if (!animal.isAlive()) {
-                        location.removeAnimal(animal);
-                    }
                 }
             }
         }
     }
 
+    public void cleanupPhase() {
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                Location location = locations[y][x];
+                location.getAnimals().removeIf(animal -> !animal.isAlive());
+            }
+        }
+    }
 
     public void reproducePhase() {
     }

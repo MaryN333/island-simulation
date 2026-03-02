@@ -2,8 +2,9 @@ package cz.wz.marysidy.island;
 
 import cz.wz.marysidy.island.model.*;
 
-public class Main {
+import java.util.List;
 
+public class Main {
     public static void main(String[] args) {
         System.out.println("Testing of Island`s movePhase()");
         Island island = new Island(5, 5);
@@ -30,11 +31,12 @@ public class Main {
         System.out.println("*-".repeat(30));
 
 
+
         System.out.println("Testing of Island`s eatPhase()");
         Location location2 = island.getLocation(1, 1);
         Wolf wolf2 = new Wolf();
         // for testing, temporarily change the access modifier in the decreaseFood() method of Animal abstr. class
-        // from protected to public
+        // from protected to public and uncomment next line
 //        wolf2.decreaseFood(5);
         Rabbit rabbit2 = new Rabbit();
         location2.addAnimal(wolf2);
@@ -54,19 +56,39 @@ public class Main {
 
 
         System.out.println("Testing of Island`s hungerPhase()");
-        Location location3 = island.getLocation(1, 1);
+        Location location3 = island.getLocation(3, 3);
         Wolf wolf3 = new Wolf();
         location3.addAnimal(wolf3);
 
         System.out.println("Initial food: " + wolf3.getCurrentFood());
+        System.out.println("Number of animals in the location before using of hungerPhase() = "
+                + location3.getAnimals().size());
+
         for (int i = 1; i <= 10; i++) {
             island.hungerPhase();
+
             System.out.println("After tick " + i +
                     " food=" + wolf3.getCurrentFood() +
-                    " alive=" + wolf3.isAlive());
+                    " alive=" + wolf3.isAlive() +
+                    "animals in location(alive and died = " + location3.getAnimals().size());
         }
         System.out.println("*-".repeat(30));
 
+
+
+        System.out.println("Testing of Island`s cleanupPhase()");
+        System.out.println("Before cleaning:");
+        List<Animal> animals = location3.getAnimals();
+        System.out.println("List`s of animals size before cleanupPhase(): " + animals.size());
+        animals.forEach(an -> System.out.println(an.isAlive()));
+
+        System.out.println("After cleaning:");
+        for (int i = 1; i <= 5; i++) {
+            island.hungerPhase();
+        }
+        island.cleanupPhase();
+        System.out.println("List`s of animals size after cleanupPhase(): " + animals.size());
+        animals.forEach(an -> System.out.println(an.isAlive()));
 
 
     }
