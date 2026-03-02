@@ -51,6 +51,24 @@ public class Main {
 
         System.out.println("\nWolf #2 food level: " + wolf2.getCurrentFood());
         System.out.println("*-".repeat(30));
+
+
+        System.out.println("Testing of Island`s hungerPhase()");
+        Location location3 = island.getLocation(1, 1);
+        Wolf wolf3 = new Wolf();
+        location3.addAnimal(wolf3);
+
+        System.out.println("Initial food: " + wolf3.getCurrentFood());
+        for (int i = 1; i <= 10; i++) {
+            island.hungerPhase();
+            System.out.println("After tick " + i +
+                    " food=" + wolf3.getCurrentFood() +
+                    " alive=" + wolf3.isAlive());
+        }
+        System.out.println("*-".repeat(30));
+
+
+
     }
 
     private static void printLocation(Location location) {

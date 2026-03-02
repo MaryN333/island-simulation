@@ -104,6 +104,23 @@ public class Island {
         }
     }
 
+    public void hungerPhase() {
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                Location location = locations[y][x];
+                List<Animal> animalsCopy = new ArrayList<>(location.getAnimals());
+
+                for (Animal animal : animalsCopy) {
+                    animal.applyMetabolism();
+
+                    if (!animal.isAlive()) {
+                        location.removeAnimal(animal);
+                    }
+                }
+            }
+        }
+    }
+
 
     public void reproducePhase() {
     }

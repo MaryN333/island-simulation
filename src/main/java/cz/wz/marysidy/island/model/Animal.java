@@ -11,6 +11,8 @@ public abstract class Animal implements Organism{
     private boolean alive = true;
     private Location location;
 
+    private static final double EPSILON = 1e-9;
+
     protected Animal(double weight, int maxSpeed, double foodRequired) {
         this.weight = weight;
         this.maxSpeed = maxSpeed;
@@ -53,9 +55,10 @@ public abstract class Animal implements Organism{
         alive = false;
     }
 
-    public void decreaseFood(double amount) {
+    protected void decreaseFood(double amount) {
         currentFood -= amount;
-        if (currentFood <= 0) {
+        if (currentFood <= EPSILON) {
+            currentFood = 0;
             die();
         }
     }
@@ -83,13 +86,17 @@ public abstract class Animal implements Organism{
             case 1 -> dx = -steps;
             case 2 -> dy = steps;
             case 3 -> dy = -steps;
+            default -> {}
         }
         return new MoveIntent(dx, dy);
     }
 
+    public void applyMetabolism() {
+        decreaseFood(foodRequired * getHungerRate());
+    }
+
     public abstract void eat(Location location);
-
     protected abstract Animal createChild();
-
     public abstract int getMaxCountPerLocation();
+    protected abstract double getHungerRate();
 }
