@@ -1,5 +1,6 @@
 package cz.wz.marysidy.island.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +45,7 @@ public class Island {
         return x >= 0 && x < width && y >= 0 && y < height;
     }
 
-    public void movePhase(){
+    public void movePhase() {
         // Stage 1 - intentions
         Map<Animal, int[]> moveIntents = new HashMap<>();
 
@@ -85,10 +86,27 @@ public class Island {
         }
     }
 
-    public void eatPhase(){}
-    public void reproducePhase(){}
+    public void eatPhase() {
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+
+                Location location = locations[y][x];
+
+                List<Animal> animalsCopy = new ArrayList<>(location.getAnimals());
+
+                for (Animal animal : animalsCopy) {
+                    if (!animal.isAlive()) {
+                        continue;
+                    }
+                    animal.eat(location);
+                }
+            }
+        }
+    }
 
 
+    public void reproducePhase() {
+    }
 
 
 }
