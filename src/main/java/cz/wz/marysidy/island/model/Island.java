@@ -110,6 +110,7 @@ public class Island {
                 List<Animal> animalsCopy = location.getAnimals();
 
                 for (Animal animal : animalsCopy) {
+                    if (!animal.isAlive()) continue;
                     animal.applyMetabolism();
                 }
             }
@@ -148,5 +149,43 @@ public class Island {
         }
     }
 
+    public void lifeCycle() {
+        movePhase();
+        eatPhase();
+        hungerPhase();
+        cleanupPhase();
+        reproducePhase();
+    }
 
+    public Map<String, Integer> collectStatistics() {
+        Map<String, Integer> stats = new HashMap<>();
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                Location location = locations[y][x];
+
+                for (Animal animal : location.getAnimals()) {
+                    if (!animal.isAlive()) continue;
+
+                    String name = animal.getClass().getSimpleName();
+                    stats.put(name, stats.getOrDefault(name, 0) + 1);
+                }
+            }
+        }
+        return stats;
+    }
+
+    public void printStatistics(int tickNumber) {
+        Map<String, Integer> stats = collectStatistics();
+
+        System.out.println("----- Tick " + tickNumber + " -----");
+        if (stats.isEmpty()) {
+            System.out.println("All animals are dead.");
+            return;
+        }
+
+        for (Map.Entry<String, Integer> entry : stats.entrySet()) {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
+        }
+    }
 }
