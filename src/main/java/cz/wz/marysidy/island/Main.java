@@ -4,11 +4,15 @@ import cz.wz.marysidy.island.model.*;
 
 public class Main {
     public static void main(String[] args) {
-        int totalTicks = 50;
+        int totalTicks = 100;
         Island island = new Island(5, 5);
 
         Location startLocation = island.getLocation(2, 2);
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 10; i++) {
+            startLocation.addPlant(new Grass());
+        }
+
+        for (int i = 0; i < 10; i++) {
             startLocation.addAnimal(new Wolf());
         }
 

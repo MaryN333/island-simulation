@@ -11,17 +11,15 @@ public abstract class Herbivore extends Animal {
 
     @Override
     public void eat(Location location) {
-        if (!isHungry()) {
-            return;
-        }
+        if (!isHungry()) return;
 
         List<Plant> plantsCopy = new ArrayList<>(location.getPlants());
+        if (plantsCopy.isEmpty()) return;
 
         for (Plant plant : plantsCopy) {
             if (!plant.isAlive()) continue;
 
             plant.die();
-            location.removePlant(plant);
             restoreFood(plant.getWeight());
             break;
         }

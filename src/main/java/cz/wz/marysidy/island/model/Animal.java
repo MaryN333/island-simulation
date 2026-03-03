@@ -97,6 +97,6 @@ public abstract class Animal implements Organism{
 
     public abstract void eat(Location location);
     protected abstract Animal createChild();
-    public abstract int getMaxCountPerLocation();
     protected abstract double getHungerRate();
+    protected abstract int getReproduceProbability();
 }

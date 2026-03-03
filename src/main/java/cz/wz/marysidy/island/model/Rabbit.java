@@ -20,10 +20,14 @@ public class Rabbit extends Herbivore {
         return new Rabbit();
     }
 
-
     @Override
     protected double getHungerRate() {
         return HUNGER_RATE;
+    }
+
+    @Override
+    protected int getReproduceProbability() {
+        return 60;
     }
 
 }

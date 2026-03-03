@@ -33,10 +33,8 @@ public class Location {
         return plants;
     }
 
-    public boolean addAnimal(Animal animal){
-        long count = animals.stream()
-                .filter(a -> a.getClass() == animal.getClass())
-                .count();
+    public boolean addAnimal(Animal animal) {
+        long count = animals.stream().filter(a -> a.getClass() == animal.getClass()).count();
 
         if (count >= animal.getMaxCountPerLocation()) {
             return false;
@@ -47,15 +45,24 @@ public class Location {
         return true;
     }
 
-    public void removeAnimal(Animal animal){
+    public void removeAnimal(Animal animal) {
         animals.remove(animal);
     }
 
-    public void addPlant(Plant plant){
+    public boolean addPlant(Plant plant) {
+
+        long count = plants.stream().filter(p -> p.getClass() == plant.getClass()).count();
+
+        if (count >= plant.getMaxCountPerLocation()) {
+            return false;
+        }
+
         plants.add(plant);
         plant.setLocation(this);
+        return true;
     }
-    public void removePlant(Plant plant){
+
+    public void removePlant(Plant plant) {
         plants.remove(plant);
     }
 
