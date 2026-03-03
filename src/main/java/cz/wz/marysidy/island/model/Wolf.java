@@ -10,7 +10,7 @@ public class Wolf extends Predator {
     private static final int MAX_COUNT_PER_LOCATION = 30;
     private static final double HUNGER_RATE = 0.2;
 
-    private static final Map<Class<? extends Animal>, Integer> FOOD_MAP = new HashMap<>();
+    private static final Map<Class<? extends Organism>, Integer> FOOD_MAP = new HashMap<>();
 
     static {
         FOOD_MAP.put(Rabbit.class, 60);
@@ -26,18 +26,13 @@ public class Wolf extends Predator {
     }
 
     @Override
-    protected Animal createChild() {
-        return new Wolf();
+    protected Map<Class<? extends Organism>, Integer> getFoodMap() {
+        return FOOD_MAP;
     }
 
     @Override
-    protected int getEatProbability(Animal animal) {
-        return FOOD_MAP.getOrDefault(animal.getClass(), 0);
-        //for test eatPhase() in Island
-//        if (animal instanceof Rabbit) {
-//            return 100;
-//        }
-//        return 0;
+    protected Animal createChild() {
+        return new Wolf();
     }
 
     @Override

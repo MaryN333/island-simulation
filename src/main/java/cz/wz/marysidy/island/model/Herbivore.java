@@ -19,9 +19,12 @@ public abstract class Herbivore extends Animal {
         for (Plant plant : plantsCopy) {
             if (!plant.isAlive()) continue;
 
-            plant.die();
-            restoreFood(plant.getWeight());
-            break;
+            int probability = getFoodMap().getOrDefault(plant.getClass(), 0);
+            if (probability > 0 && tryToEat(probability)) {
+                plant.die();
+                restoreFood(plant.getWeight());
+                break;
+            }
         }
     }
 }

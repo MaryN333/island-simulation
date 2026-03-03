@@ -1,5 +1,6 @@
 package cz.wz.marysidy.island.model;
 
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class Animal implements Organism{
@@ -95,8 +96,13 @@ public abstract class Animal implements Organism{
         decreaseFood(foodRequired * getHungerRate());
     }
 
+    protected boolean tryToEat(int probability) {
+        return ThreadLocalRandom.current().nextInt(100) < probability;
+    }
+
     public abstract void eat(Location location);
     protected abstract Animal createChild();
     protected abstract double getHungerRate();
     protected abstract int getReproduceProbability();
+    protected abstract Map<Class<? extends Organism>, Integer> getFoodMap();
 }
