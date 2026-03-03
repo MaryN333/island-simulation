@@ -44,4 +44,9 @@ public class Wolf extends Predator {
     protected double getHungerRate() {
         return HUNGER_RATE;
     }
+
+    @Override
+    protected int getReproduceProbability() {
+        return 20;
+    }
 }

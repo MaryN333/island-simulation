@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Island {
     private final int width;
@@ -43,6 +44,21 @@ public class Island {
 
     public boolean isValidCoordinate(int x, int y) {
         return x >= 0 && x < width && y >= 0 && y < height;
+    }
+
+    private void plantGrowthPhase() {
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                Location location = locations[y][x];
+                int newPlants = random.nextInt(0, 3);
+
+                for (int i = 0; i < newPlants; i++) {
+                    location.addPlant(new Grass());
+                }
+            }
+        }
     }
 
     public void movePhase() {
@@ -122,11 +138,13 @@ public class Island {
             for (int x = 0; x < width; x++) {
                 Location location = locations[y][x];
                 location.getAnimals().removeIf(animal -> !animal.isAlive());
+                location.getPlants().removeIf(p -> !p.isAlive());
             }
         }
     }
 
     public void reproducePhase() {
+        ThreadLocalRandom random = ThreadLocalRandom.current();
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 Location location = locations[y][x];
@@ -134,15 +152,22 @@ public class Island {
 
                 for (Animal animal : location.getAnimals()) {
                     if (!animal.isAlive()) continue;
+                    if (animal.isHungry()) continue;
 
                     groups.computeIfAbsent(animal.getClass(), k -> new ArrayList<>()).add(animal);
                 }
 
                 for (List<Animal> sameTypeAnimals : groups.values()) {
-                    if (sameTypeAnimals.size() >= 2) {
-                        Animal parent = sameTypeAnimals.get(0);
-                        Animal child = parent.createChild();
-                        location.addAnimal(child);
+                    int pairs = sameTypeAnimals.size() / 2;
+                    if (pairs == 0) continue;
+
+                    Animal parent = sameTypeAnimals.get(0);
+                    for (int i = 0; i < pairs; i++) {
+                        int probability = parent.getReproduceProbability();
+                        if (random.nextInt(100) < probability) {
+                            Animal child = parent.createChild();
+                            location.addAnimal(child);
+                        }
                     }
                 }
             }
@@ -150,11 +175,12 @@ public class Island {
     }
 
     public void lifeCycle() {
+        plantGrowthPhase();
         movePhase();
         eatPhase();
+        reproducePhase();
         hungerPhase();
         cleanupPhase();
-        reproducePhase();
     }
 
     public Map<String, Integer> collectStatistics() {
@@ -168,6 +194,13 @@ public class Island {
                     if (!animal.isAlive()) continue;
 
                     String name = animal.getClass().getSimpleName();
+                    stats.put(name, stats.getOrDefault(name, 0) + 1);
+                }
+
+                for (Plant plant : location.getPlants()) {
+                    if (!plant.isAlive()) continue;
+
+                    String name = plant.getClass().getSimpleName();
                     stats.put(name, stats.getOrDefault(name, 0) + 1);
                 }
             }
