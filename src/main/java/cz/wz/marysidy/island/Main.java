@@ -10,7 +10,7 @@ public class Main {
         Island island = new Island(5, 5);
         Location start = island.getLocation(2, 2);
         Wolf wolf = new Wolf();
-        start.addAnimal(wolf);
+        start.addAnimal(new Wolf());
 
         System.out.println("Wolf #1. Before movePhase():");
         printIsland(island);
@@ -55,6 +55,7 @@ public class Main {
         System.out.println("*-".repeat(30));
 
 
+
         System.out.println("Testing of Island`s hungerPhase()");
         Location location3 = island.getLocation(3, 3);
         Wolf wolf3 = new Wolf();
@@ -89,6 +90,19 @@ public class Main {
         island.cleanupPhase();
         System.out.println("List`s of animals size after cleanupPhase(): " + animals.size());
         animals.forEach(an -> System.out.println(an.isAlive()));
+        System.out.println("*-".repeat(30));
+
+
+
+
+        System.out.println("Testing of Island`s reproducePhase()");
+        Location location4 = island.getLocation(3, 3);
+        location4.addAnimal(new Wolf());
+        location4.addAnimal(new Wolf());
+        System.out.println("Before reproducePhase():"+ location4.getAnimals().size());
+        island.reproducePhase();
+        System.out.println("After: " + location4.getAnimals().size());
+        System.out.println("*-".repeat(30));
 
 
     }

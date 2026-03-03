@@ -1,5 +1,6 @@
 package cz.wz.marysidy.island.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,7 +66,7 @@ public class Island {
             }
         }
 
-        // Stage 2 — mooving
+        // Stage 2 — moving
         for (Map.Entry<Animal, int[]> entry : moveIntents.entrySet()) {
             Animal animal = entry.getKey();
             int targetX = entry.getValue()[0];
@@ -90,8 +91,6 @@ public class Island {
             for (int x = 0; x < width; x++) {
 
                 Location location = locations[y][x];
-
-//                List<Animal> animalsCopy = new ArrayList<>(location.getAnimals());
                 List<Animal> animalsCopy = location.getAnimals();
 
                 for (Animal animal : animalsCopy) {
@@ -108,7 +107,6 @@ public class Island {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 Location location = locations[y][x];
-//                List<Animal> animalsCopy = new ArrayList<>(location.getAnimals());
                 List<Animal> animalsCopy = location.getAnimals();
 
                 for (Animal animal : animalsCopy) {
@@ -128,6 +126,26 @@ public class Island {
     }
 
     public void reproducePhase() {
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                Location location = locations[y][x];
+                Map<Class<? extends Animal>, List<Animal>> groups = new HashMap<>();
+
+                for (Animal animal : location.getAnimals()) {
+                    if (!animal.isAlive()) continue;
+
+                    groups.computeIfAbsent(animal.getClass(), k -> new ArrayList<>()).add(animal);
+                }
+
+                for (List<Animal> sameTypeAnimals : groups.values()) {
+                    if (sameTypeAnimals.size() >= 2) {
+                        Animal parent = sameTypeAnimals.get(0);
+                        Animal child = parent.createChild();
+                        location.addAnimal(child);
+                    }
+                }
+            }
+        }
     }
 
 
