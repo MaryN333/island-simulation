@@ -20,6 +20,14 @@ public class Main {
             startLocation.addAnimal(new Rabbit());
         }
 
+        for (int i = 0; i < 10; i++) {
+            startLocation.addAnimal(new Mouse());
+        }
+
+        for (int i = 0; i < 3; i++) {
+            startLocation.addAnimal(new Fox());
+        }
+
         for (int tick = 1; tick <= totalTicks; tick++) {
             island.lifeCycle();
             island.printStatistics(tick);
