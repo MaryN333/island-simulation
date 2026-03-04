@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Supplier;
 
 public class Island {
     private final int width;
@@ -46,6 +47,49 @@ public class Island {
         return x >= 0 && x < width && y >= 0 && y < height;
     }
 
+    public void populate() {
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                Location location = locations[y][x];
+                addRandomOrganisms(location, Grass::new);
+                addRandomOrganisms(location, Mouse::new);
+                addRandomOrganisms(location, Rabbit::new);
+                addRandomOrganisms(location, Fox::new);
+                addRandomOrganisms(location, Wolf::new);
+            }
+        }
+    }
+
+    public void lifeCycle() {
+        plantGrowthPhase();
+        movePhase();
+        eatPhase();
+        reproducePhase();
+        hungerPhase();
+        cleanupPhase();
+    }
+
+    private <T extends Organism> void addRandomOrganisms(Location location, Supplier<T> factory) {
+        T sample = factory.get();
+        int max = sample.getMaxCountPerLocation();
+
+        // 2–5%
+        int min = Math.max(1, (int) (max * 0.02));
+        int upper = Math.max(min + 1, (int) (max * 0.05));
+
+        int count = ThreadLocalRandom.current().nextInt(min, upper);
+
+        for (int i = 0; i < count; i++) {
+            T organism = factory.get();
+
+            if (organism instanceof Plant plant) {
+                location.addPlant(plant);
+            } else if (organism instanceof Animal animal) {
+                location.addAnimal(animal);
+            }
+        }
+    }
+
     private void plantGrowthPhase() {
         ThreadLocalRandom random = ThreadLocalRandom.current();
 
@@ -61,7 +105,7 @@ public class Island {
         }
     }
 
-    public void movePhase() {
+    private void movePhase() {
         // Stage 1 - intentions
         Map<Animal, int[]> moveIntents = new HashMap<>();
 
@@ -102,7 +146,7 @@ public class Island {
         }
     }
 
-    public void eatPhase() {
+    private void eatPhase() {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
 
@@ -119,31 +163,7 @@ public class Island {
         }
     }
 
-    public void hungerPhase() {
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                Location location = locations[y][x];
-                List<Animal> animalsCopy = location.getAnimals();
-
-                for (Animal animal : animalsCopy) {
-                    if (!animal.isAlive()) continue;
-                    animal.applyMetabolism();
-                }
-            }
-        }
-    }
-
-    public void cleanupPhase() {
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                Location location = locations[y][x];
-                location.getAnimals().removeIf(animal -> !animal.isAlive());
-                location.getPlants().removeIf(p -> !p.isAlive());
-            }
-        }
-    }
-
-    public void reproducePhase() {
+    private void reproducePhase() {
         ThreadLocalRandom random = ThreadLocalRandom.current();
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
@@ -174,13 +194,28 @@ public class Island {
         }
     }
 
-    public void lifeCycle() {
-        plantGrowthPhase();
-        movePhase();
-        eatPhase();
-        reproducePhase();
-        hungerPhase();
-        cleanupPhase();
+    private void hungerPhase() {
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                Location location = locations[y][x];
+                List<Animal> animalsCopy = location.getAnimals();
+
+                for (Animal animal : animalsCopy) {
+                    if (!animal.isAlive()) continue;
+                    animal.applyMetabolism();
+                }
+            }
+        }
+    }
+
+    private void cleanupPhase() {
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                Location location = locations[y][x];
+                location.getAnimals().removeIf(animal -> !animal.isAlive());
+                location.getPlants().removeIf(p -> !p.isAlive());
+            }
+        }
     }
 
     public Map<String, Integer> collectStatistics() {
@@ -208,17 +243,9 @@ public class Island {
         return stats;
     }
 
-    public void printStatistics(int tickNumber) {
-        Map<String, Integer> stats = collectStatistics();
-
-        System.out.println("----- Tick " + tickNumber + " -----");
-        if (stats.isEmpty()) {
-            System.out.println("All animals are dead.");
-            return;
-        }
-
-        for (Map.Entry<String, Integer> entry : stats.entrySet()) {
-            System.out.println(entry.getKey() + ": " + entry.getValue());
-        }
+    public void printStatistics(int tick) {
+        System.out.println("----- Tick " + tick + " -----");
+        collectStatistics().forEach((k, v) ->
+                System.out.println(k + ": " + v));
     }
 }
