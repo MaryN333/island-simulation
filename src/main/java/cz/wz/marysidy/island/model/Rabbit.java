@@ -9,6 +9,7 @@ public class Rabbit extends Herbivore {
     private static final double FOOD_REQUIRED = 0.45;
     private static final int MAX_COUNT_PER_LOCATION = 150;
     private static final double HUNGER_RATE = 0.15;
+    private static final int REPRODUCE_PROBABILITY = 60;
     private static final Map<Class<? extends Organism>, Integer> FOOD_MAP = new HashMap<>();
 
     static {
@@ -30,7 +31,7 @@ public class Rabbit extends Herbivore {
 
     @Override
     protected Animal createChild() {
-        return new Rabbit();
+        return new Mouse();
     }
 
     @Override
@@ -40,7 +41,6 @@ public class Rabbit extends Herbivore {
 
     @Override
     protected int getReproduceProbability() {
-        return 60;
+        return REPRODUCE_PROBABILITY;
     }
-
 }

@@ -8,13 +8,14 @@ public class Wolf extends Predator {
     private static final int MAX_SPEED = 3;
     private static final double FOOD_REQUIRED = 8;
     private static final int MAX_COUNT_PER_LOCATION = 30;
-    private static final double HUNGER_RATE = 0.2;
+    private static final double HUNGER_RATE = 0.1;
+    private static final int REPRODUCE_PROBABILITY = 20;
 
     private static final Map<Class<? extends Organism>, Integer> FOOD_MAP = new HashMap<>();
 
     static {
         FOOD_MAP.put(Rabbit.class, 60);
-//        FOOD_MAP.put(Mouse.class, 60);
+        FOOD_MAP.put(Mouse.class, 80);
     }
 
     public Wolf() {
@@ -42,6 +43,6 @@ public class Wolf extends Predator {
 
     @Override
     protected int getReproduceProbability() {
-        return 20;
+        return REPRODUCE_PROBABILITY;
     }
 }
