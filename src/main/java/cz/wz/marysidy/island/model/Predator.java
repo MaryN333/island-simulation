@@ -1,6 +1,5 @@
 package cz.wz.marysidy.island.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Predator extends Animal {
@@ -10,22 +9,7 @@ public abstract class Predator extends Animal {
     }
 
     @Override
-    public void eat(Location location) {
-        if (!isHungry()) return;
-
-        List<Animal> animalsCopy = new ArrayList<>(location.getAnimals());
-
-        for (Animal candidate : animalsCopy) {
-            if (candidate == this) continue;
-            if (!candidate.isAlive()) continue;
-
-            int probability = getFoodMap().getOrDefault(candidate.getClass(), 0);
-
-            if (probability > 0 && tryToEat(probability)) {
-                candidate.die();
-                restoreFood(candidate.getWeight());
-                break;
-            }
-        }
+    protected List<? extends Organism> getFoodSources(Location location) {
+        return location.getAnimals();
     }
 }

@@ -3,7 +3,7 @@ package cz.wz.marysidy.island;
 import cz.wz.marysidy.island.model.*;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         int totalTicks = 100;
         Island island = new Island(5, 5);
         island.populate();
@@ -16,6 +16,8 @@ public class Main {
                 System.out.println("Simulation ended.");
                 break;
             }
+
+            Thread.sleep(200);
         }
     }
 }

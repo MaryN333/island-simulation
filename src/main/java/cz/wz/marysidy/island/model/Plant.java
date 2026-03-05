@@ -3,7 +3,7 @@ package cz.wz.marysidy.island.model;
 public abstract class Plant implements Organism {
 
     private final double weight;
-    private boolean alive;
+    private volatile boolean alive;
     private Location location;
 
     protected Plant(double weight) {
@@ -22,8 +22,11 @@ public abstract class Plant implements Organism {
     }
 
     @Override
-    public void die() {
-        this.alive = false;
+    public synchronized boolean tryDie() {
+        if(!alive) return false;
+
+        alive = false;
+        return true;
     }
 
     public Location getLocation() {

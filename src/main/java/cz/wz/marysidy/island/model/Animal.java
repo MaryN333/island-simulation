@@ -1,5 +1,7 @@
 package cz.wz.marysidy.island.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -9,7 +11,7 @@ public abstract class Animal implements Organism{
     private final double foodRequired;
 
     private double currentFood;
-    private boolean alive = true;
+    private volatile boolean alive = true;
     private Location location;
 
     private static final double EPSILON = 1e-9;
@@ -52,15 +54,18 @@ public abstract class Animal implements Organism{
     }
 
     @Override
-    public void die() {
+    public synchronized boolean tryDie() {
+        if(!alive) return false;
+
         alive = false;
+        return true;
     }
 
     protected void decreaseFood(double amount) {
         currentFood -= amount;
         if (currentFood <= EPSILON) {
             currentFood = 0;
-            die();
+            tryDie();
         }
     }
 
@@ -100,9 +105,30 @@ public abstract class Animal implements Organism{
         return ThreadLocalRandom.current().nextInt(100) < probability;
     }
 
-    public abstract void eat(Location location);
+    public void eat(Location location) {
+        if (!isHungry()) return;
+
+        List<Organism> foodSources = new ArrayList<>(getFoodSources(location));
+
+        if (foodSources.isEmpty()) return;
+
+        for (Organism food : foodSources) {
+            if (!food.isAlive()) continue;
+            if (food == this) continue;
+
+            int probability = getFoodMap().getOrDefault(food.getClass(), 0);
+
+            if (probability > 0 && tryToEat(probability)) {
+                food.tryDie();
+                restoreFood(food.getWeight());
+                break;
+            }
+        }
+    }
+
     protected abstract Animal createChild();
     protected abstract double getHungerRate();
     protected abstract int getReproduceProbability();
     protected abstract Map<Class<? extends Organism>, Integer> getFoodMap();
+    protected abstract List<? extends Organism> getFoodSources(Location location);
 }
