@@ -107,7 +107,7 @@ public class Island {
 
     private void movePhase() {
         // Stage 1 - intentions
-        Map<Animal, int[]> moveIntents = new HashMap<>();
+        Map<Animal, MoveIntent> moveIntents = new HashMap<>();
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
@@ -118,25 +118,26 @@ public class Island {
                     if (!animal.isAlive()) continue;
 
                     MoveIntent intent = animal.decideMove();
-                    int targetX = x + intent.getDx();
-                    int targetY = y + intent.getDy();
-
-                    moveIntents.put(animal, new int[]{targetX, targetY});
+                    moveIntents.put(animal, intent);
                 }
             }
         }
 
         // Stage 2 — moving
-        for (Map.Entry<Animal, int[]> entry : moveIntents.entrySet()) {
+        for (Map.Entry<Animal, MoveIntent> entry: moveIntents.entrySet()) {
             Animal animal = entry.getKey();
-            int targetX = entry.getValue()[0];
-            int targetY = entry.getValue()[1];
+            MoveIntent intent = entry.getValue();
+            Location currentLocation = animal.getLocation();
+            int currentX = currentLocation.getX();
+            int currentY = currentLocation.getY();
+
+            int targetX = currentX + intent.getDx();
+            int targetY = currentY + intent.getDy();
 
             if (!isValidCoordinate(targetX, targetY)) {
                 continue; // doesn`t move
             }
 
-            Location currentLocation = animal.getLocation();
             Location targetLocation = getLocation(targetX, targetY);
 
             boolean added = targetLocation.addAnimal(animal);
