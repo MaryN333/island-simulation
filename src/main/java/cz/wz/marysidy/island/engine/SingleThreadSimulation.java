@@ -1,10 +1,23 @@
 package cz.wz.marysidy.island.engine;
 
+//import cz.wz.marysidy.island.model.Island;
+
 import cz.wz.marysidy.island.model.Island;
+import cz.wz.marysidy.island.phase.*;
+
+import java.util.List;
 
 public class SingleThreadSimulation implements SimulationEngine {
     private final Island island;
     private final int totalTicks;
+    private final List<SimulationPhase> phases = List.of(
+            new PlantGrowthPhase(),
+            new MovePhase(),
+            new EatPhase(),
+            new ReproducePhase(),
+            new HungerPhase(),
+            new CleanupPhase()
+    );
 
     public SingleThreadSimulation(Island island, int totalTicks) {
         this.island = island;
@@ -14,7 +27,10 @@ public class SingleThreadSimulation implements SimulationEngine {
     @Override
     public void runSimulation() {
         for (int tick = 1; tick <= totalTicks; tick++) {
-            island.lifeCycle();
+            for (SimulationPhase phase : phases) {
+                phase.execute(island);
+            }
+
             island.printStatistics(tick);
 
             if (island.collectStatistics().isEmpty()) {
@@ -29,6 +45,5 @@ public class SingleThreadSimulation implements SimulationEngine {
                 break;
             }
         }
-
     }
 }

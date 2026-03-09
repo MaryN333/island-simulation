@@ -1,9 +1,6 @@
 package cz.wz.marysidy.island.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -58,20 +55,20 @@ public class Island {
         });
     }
 
-    public void lifeCycle() {
-        runPhase(this::plantGrowthPhase);
-        movePhase();
-        runPhase(this::eatPhase);
-        runPhase(this::reproducePhase);
-        runPhase(this::hungerPhase);
-        runPhase(this::cleanupPhase);
-    }
+//    public void lifeCycle() {
+//        runPhase(this::plantGrowthPhase);
+//        movePhase();
+//        runPhase(this::eatPhase);
+//        runPhase(this::reproducePhase);
+//        runPhase(this::hungerPhase);
+//        runPhase(this::cleanupPhase);
+//    }
 
     private void runPhase(Consumer<Location> action) {
         forEachLocation(action);
     }
 
-    private void forEachLocation(Consumer<Location> action) {
+    public void forEachLocation(Consumer<Location> action) {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 action.accept(locations[y][x]);
@@ -99,7 +96,7 @@ public class Island {
         }
     }
 
-    private void plantGrowthPhase(Location location) {
+    public void plantGrowthPhase(Location location) {
         int newPlants = ThreadLocalRandom.current().nextInt(0, 3);
 
         for (int i = 0; i < newPlants; i++) {
@@ -107,7 +104,7 @@ public class Island {
         }
     }
 
-    private void movePhase() {
+    public void movePhase() {
         // Stage 1 - intentions
         Map<Animal, MoveIntent> moveIntents = new HashMap<>();
         forEachLocation(location -> {
@@ -145,8 +142,9 @@ public class Island {
         }
     }
 
-    private void eatPhase(Location location) {
+    public void eatPhase(Location location) {
         List<Animal> animalsCopy = new ArrayList<>(location.getAnimals());
+        Collections.shuffle(animalsCopy);
 
         for (Animal animal : animalsCopy) {
             if (!animal.isAlive()) continue;
@@ -154,7 +152,7 @@ public class Island {
         }
     }
 
-    private void reproducePhase(Location location) {
+    public void reproducePhase(Location location) {
         ThreadLocalRandom random = ThreadLocalRandom.current();
         Map<Class<? extends Animal>, List<Animal>> groups = new HashMap<>();
 
@@ -166,6 +164,7 @@ public class Island {
         }
 
         for (List<Animal> sameTypeAnimals : groups.values()) {
+            Collections.shuffle(sameTypeAnimals);
             int pairs = sameTypeAnimals.size() / 2;
             if (pairs == 0) continue;
 
@@ -182,7 +181,7 @@ public class Island {
         }
     }
 
-    private void hungerPhase(Location location) {
+    public void hungerPhase(Location location) {
         List<Animal> animalsCopy = new ArrayList<>(location.getAnimals());
 
         for (Animal animal : animalsCopy) {
@@ -191,7 +190,7 @@ public class Island {
         }
     }
 
-    private void cleanupPhase(Location location) {
+    public void cleanupPhase(Location location) {
         location.getAnimals().removeIf(animal -> !animal.isAlive());
         location.getPlants().removeIf(plant -> !plant.isAlive());
     }
