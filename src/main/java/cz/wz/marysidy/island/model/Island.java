@@ -59,12 +59,24 @@ public class Island {
     }
 
     public void lifeCycle() {
-        plantGrowthPhase();
+        runPhase(this::plantGrowthPhase);
         movePhase();
-        eatPhase();
-        reproducePhase();
-        hungerPhase();
-        cleanupPhase();
+        runPhase(this::eatPhase);
+        runPhase(this::reproducePhase);
+        runPhase(this::hungerPhase);
+        runPhase(this::cleanupPhase);
+    }
+
+    private void runPhase(Consumer<Location> action) {
+        forEachLocation(action);
+    }
+
+    private void forEachLocation(Consumer<Location> action) {
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                action.accept(locations[y][x]);
+            }
+        }
     }
 
     private <T extends Organism> void addRandomOrganisms(Location location, Supplier<T> factory) {
@@ -87,24 +99,12 @@ public class Island {
         }
     }
 
-    private void forEachLocation(Consumer<Location> action) {
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                action.accept(locations[y][x]);
-            }
+    private void plantGrowthPhase(Location location) {
+        int newPlants = ThreadLocalRandom.current().nextInt(0, 3);
+
+        for (int i = 0; i < newPlants; i++) {
+            location.addPlant(new Grass());
         }
-    }
-
-    private void plantGrowthPhase() {
-        ThreadLocalRandom random = ThreadLocalRandom.current();
-
-        forEachLocation(location -> {
-            int newPlants = random.nextInt(0, 3);
-
-            for (int i = 0; i < newPlants; i++) {
-                location.addPlant(new Grass());
-            }
-        });
     }
 
     private void movePhase() {
@@ -122,7 +122,7 @@ public class Island {
         });
 
         // Stage 2 — moving
-        for (Map.Entry<Animal, MoveIntent> entry: moveIntents.entrySet()) {
+        for (Map.Entry<Animal, MoveIntent> entry : moveIntents.entrySet()) {
             Animal animal = entry.getKey();
             MoveIntent intent = entry.getValue();
             Location currentLocation = animal.getLocation();
@@ -145,62 +145,55 @@ public class Island {
         }
     }
 
-    private void eatPhase() {
-        forEachLocation(location -> {
-            List<Animal> animalsCopy = new ArrayList<>(location.getAnimals());
+    private void eatPhase(Location location) {
+        List<Animal> animalsCopy = new ArrayList<>(location.getAnimals());
 
-            for (Animal animal : animalsCopy) {
-                if (!animal.isAlive()) continue;
-                animal.eat(location);
-            }
-        });
+        for (Animal animal : animalsCopy) {
+            if (!animal.isAlive()) continue;
+            animal.eat(location);
+        }
     }
 
-    private void reproducePhase() {
+    private void reproducePhase(Location location) {
         ThreadLocalRandom random = ThreadLocalRandom.current();
-        forEachLocation(location -> {
-            Map<Class<? extends Animal>, List<Animal>> groups = new HashMap<>();
+        Map<Class<? extends Animal>, List<Animal>> groups = new HashMap<>();
 
-            for (Animal animal : location.getAnimals()) {
-                if (!animal.isAlive()) continue;
-                if (animal.isHungry()) continue;
+        for (Animal animal : location.getAnimals()) {
+            if (!animal.isAlive()) continue;
+            if (animal.isHungry()) continue;
 
-                groups.computeIfAbsent(animal.getClass(), k -> new ArrayList<>()).add(animal);
-            }
+            groups.computeIfAbsent(animal.getClass(), k -> new ArrayList<>()).add(animal);
+        }
 
-            for (List<Animal> sameTypeAnimals : groups.values()) {
-                int pairs = sameTypeAnimals.size() / 2;
-                if (pairs == 0) continue;
+        for (List<Animal> sameTypeAnimals : groups.values()) {
+            int pairs = sameTypeAnimals.size() / 2;
+            if (pairs == 0) continue;
 
-                Animal parent = sameTypeAnimals.get(0);
-                for (int i = 0; i < pairs; i++) {
-                    int probability = parent.getReproduceProbability();
-                    if (random.nextInt(100) < probability) {
-                        Animal child = parent.createChild();
-                        location.addAnimal(child);
-                    }
+            Animal parent = sameTypeAnimals.get(0);
+
+            for (int i = 0; i < pairs; i++) {
+                int probability = parent.getReproduceProbability();
+
+                if (random.nextInt(100) < probability) {
+                    Animal child = parent.createChild();
+                    location.addAnimal(child);
                 }
             }
-        });
+        }
     }
 
-    private void hungerPhase() {
-        forEachLocation(location -> {
-            List<Animal> animalsCopy = new ArrayList<>(location.getAnimals());
+    private void hungerPhase(Location location) {
+        List<Animal> animalsCopy = new ArrayList<>(location.getAnimals());
 
-            for (Animal animal : animalsCopy) {
-                if (!animal.isAlive()) continue;
-                animal.applyMetabolism();
-            }
-        });
+        for (Animal animal : animalsCopy) {
+            if (!animal.isAlive()) continue;
+            animal.applyMetabolism();
+        }
     }
 
-    private void cleanupPhase() {
-        forEachLocation(location -> {
-            location.getAnimals().removeIf(animal -> !animal.isAlive());
-            location.getPlants().removeIf(plant -> !plant.isAlive());
-
-        });
+    private void cleanupPhase(Location location) {
+        location.getAnimals().removeIf(animal -> !animal.isAlive());
+        location.getPlants().removeIf(plant -> !plant.isAlive());
     }
 
     public Map<String, Integer> collectStatistics() {
