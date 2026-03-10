@@ -47,9 +47,4 @@ public class SingleThreadSimulation implements SimulationEngine {
             }
         }
     }
-
-    @Override
-    public boolean isParallel() {
-        return false;
-    }
 }

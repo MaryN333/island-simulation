@@ -58,9 +58,4 @@ public class ParallelSimulation implements SimulationEngine {
 
         }, 0, 200, TimeUnit.MILLISECONDS);
     }
-
-    @Override
-    public boolean isParallel() {
-        return true;
-    }
 }
