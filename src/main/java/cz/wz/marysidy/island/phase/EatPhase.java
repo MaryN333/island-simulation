@@ -4,10 +4,8 @@ import cz.wz.marysidy.island.model.Island;
 import cz.wz.marysidy.island.service.LocationService;
 
 public class EatPhase implements SimulationPhase {
-
     @Override
-    public void execute(Island island) {
-        LocationService locationService = new LocationService(island);
+    public void execute(Island island, LocationService locationService) {
         locationService.forEachLocation(island::eatPhase);
     }
 }
