@@ -1,5 +1,7 @@
 package cz.wz.marysidy.island.model;
 
+import cz.wz.marysidy.island.factory.OrganismFactory;
+
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
@@ -47,25 +49,10 @@ public class Island {
 
     public void populate() {
         forEachLocation(location -> {
-            addRandomOrganisms(location, Grass::new);
-            addRandomOrganisms(location, Mouse::new);
-            addRandomOrganisms(location, Rabbit::new);
-            addRandomOrganisms(location, Fox::new);
-            addRandomOrganisms(location, Wolf::new);
+            for (var supplier : OrganismFactory.getOrganismSuppliers()) {
+                addRandomOrganisms(location, supplier);
+            }
         });
-    }
-
-//    public void lifeCycle() {
-//        runPhase(this::plantGrowthPhase);
-//        movePhase();
-//        runPhase(this::eatPhase);
-//        runPhase(this::reproducePhase);
-//        runPhase(this::hungerPhase);
-//        runPhase(this::cleanupPhase);
-//    }
-
-    private void runPhase(Consumer<Location> action) {
-        forEachLocation(action);
     }
 
     public void forEachLocation(Consumer<Location> action) {
