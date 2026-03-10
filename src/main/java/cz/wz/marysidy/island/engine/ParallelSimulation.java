@@ -6,9 +6,11 @@ import cz.wz.marysidy.island.service.LocationService;
 
 import java.util.List;
 
-public class SingleThreadSimulation implements SimulationEngine {
+public class ParallelSimulation implements SimulationEngine {
     private final Island island;
     private final int totalTicks;
+    private final LocationService locationService;
+
     private final List<SimulationPhase> phases = List.of(
             new PlantGrowthPhase(),
             new MovePhase(),
@@ -17,9 +19,8 @@ public class SingleThreadSimulation implements SimulationEngine {
             new HungerPhase(),
             new CleanupPhase()
     );
-    private final LocationService locationService;
 
-    public SingleThreadSimulation(Island island, int totalTicks) {
+    public ParallelSimulation(Island island, int totalTicks) {
         this.island = island;
         this.totalTicks = totalTicks;
         this.locationService = new LocationService(island);
@@ -28,8 +29,9 @@ public class SingleThreadSimulation implements SimulationEngine {
     @Override
     public void runSimulation() {
         for (int tick = 1; tick <= totalTicks; tick++) {
+
             for (SimulationPhase phase : phases) {
-                phase.execute(island, locationService, false);
+                phase.execute(island, locationService, true);
             }
 
             island.printStatistics(tick);
@@ -50,6 +52,6 @@ public class SingleThreadSimulation implements SimulationEngine {
 
     @Override
     public boolean isParallel() {
-        return false;
+        return true;
     }
 }
