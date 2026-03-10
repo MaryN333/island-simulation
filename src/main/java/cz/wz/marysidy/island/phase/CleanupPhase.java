@@ -1,10 +1,12 @@
 package cz.wz.marysidy.island.phase;
 
 import cz.wz.marysidy.island.model.Island;
+import cz.wz.marysidy.island.service.LocationService;
 
 public class CleanupPhase implements SimulationPhase {
     @Override
     public void execute(Island island) {
-        island.forEachLocation(island::cleanupPhase);
+        LocationService locationService = new LocationService(island);
+        locationService.forEachLocation(island::cleanupPhase);
     }
 }
