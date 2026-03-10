@@ -1,16 +1,11 @@
 package cz.wz.marysidy.island;
 
-import cz.wz.marysidy.island.engine.ParallelSimulation;
-import cz.wz.marysidy.island.model.Island;
+import cz.wz.marysidy.island.controller.SimulationController;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
-        Island island = new Island(5, 5);
-        island.populate();
+        SimulationController controller = new SimulationController(10, 10, 30, true);
 
-//        SingleThreadSimulation simulation = new SingleThreadSimulation(island, 30);
-        ParallelSimulation simulation = new ParallelSimulation(island,30);
-        simulation.runSimulation();
-
+        controller.startSimulation();
     }
 }
