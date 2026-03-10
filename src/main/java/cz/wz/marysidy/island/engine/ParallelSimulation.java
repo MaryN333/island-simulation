@@ -5,11 +5,18 @@ import cz.wz.marysidy.island.phase.*;
 import cz.wz.marysidy.island.service.LocationService;
 
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ParallelSimulation implements SimulationEngine {
+    private static final int CORE_POOL_SIZE = 1;
+
     private final Island island;
     private final int totalTicks;
     private final LocationService locationService;
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(CORE_POOL_SIZE);
 
     private final List<SimulationPhase> phases = List.of(
             new PlantGrowthPhase(),
@@ -28,26 +35,28 @@ public class ParallelSimulation implements SimulationEngine {
 
     @Override
     public void runSimulation() {
-        for (int tick = 1; tick <= totalTicks; tick++) {
+        AtomicInteger tick = new AtomicInteger(1);
+
+        scheduler.scheduleAtFixedRate(() -> {
+            int currentTick = tick.getAndIncrement();
+
+            if (currentTick > totalTicks) {
+                scheduler.shutdown();
+                return;
+            }
 
             for (SimulationPhase phase : phases) {
                 phase.execute(island, locationService, true);
             }
 
-            island.printStatistics(tick);
+            island.printStatistics(currentTick);
 
             if (island.collectStatistics().isEmpty()) {
                 System.out.println("Simulation ended.");
-                break;
+                scheduler.shutdown();
             }
 
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                break;
-            }
-        }
+        }, 0, 200, TimeUnit.MILLISECONDS);
     }
 
     @Override
