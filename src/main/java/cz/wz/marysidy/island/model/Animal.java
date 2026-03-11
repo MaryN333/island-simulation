@@ -1,11 +1,12 @@
 package cz.wz.marysidy.island.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
-public abstract class Animal implements Organism{
+public abstract class Animal implements Organism {
     private final double weight;
     private final int maxSpeed;
     private final double foodRequired;
@@ -55,7 +56,7 @@ public abstract class Animal implements Organism{
 
     @Override
     public synchronized boolean tryDie() {
-        if(!alive) return false;
+        if (!alive) return false;
 
         alive = false;
         return true;
@@ -77,7 +78,6 @@ public abstract class Animal implements Organism{
         return currentFood < foodRequired;
     }
 
-
     public MoveIntent decideMove() {
         ThreadLocalRandom random = ThreadLocalRandom.current();
 
@@ -92,7 +92,8 @@ public abstract class Animal implements Organism{
             case 1 -> dx = -steps;
             case 2 -> dy = steps;
             case 3 -> dy = -steps;
-            default -> {}
+            default -> {
+            }
         }
         return new MoveIntent(dx, dy);
     }
@@ -109,10 +110,13 @@ public abstract class Animal implements Organism{
         if (!isHungry()) return;
 
         List<Organism> foodSources = new ArrayList<>(getFoodSources(location));
+        Collections.shuffle(foodSources);
 
         if (foodSources.isEmpty()) return;
 
         for (Organism food : foodSources) {
+            if (!isHungry()) return;
+
             if (!food.isAlive()) continue;
             if (food == this) continue;
 
@@ -121,14 +125,17 @@ public abstract class Animal implements Organism{
             if (probability > 0 && tryToEat(probability)) {
                 food.tryDie();
                 restoreFood(food.getWeight());
-                break;
             }
         }
     }
 
     protected abstract Animal createChild();
+
     protected abstract double getHungerRate();
+
     protected abstract int getReproduceProbability();
+
     protected abstract Map<Class<? extends Organism>, Integer> getFoodMap();
+
     protected abstract List<? extends Organism> getFoodSources(Location location);
 }
