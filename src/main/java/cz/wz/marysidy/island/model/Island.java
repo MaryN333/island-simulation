@@ -49,7 +49,7 @@ public class Island {
 
     public void populate() {
         forEachLocation(location -> {
-            for (var supplier : OrganismFactory.getOrganismSuppliers()) {
+            for (Supplier<? extends Organism> supplier : OrganismFactory.getOrganismSuppliers()) {
                 addRandomOrganisms(location, supplier);
             }
         });
@@ -155,9 +155,9 @@ public class Island {
             int pairs = sameTypeAnimals.size() / 2;
             if (pairs == 0) continue;
 
-            Animal parent = sameTypeAnimals.get(0);
 
             for (int i = 0; i < pairs; i++) {
+                Animal parent = sameTypeAnimals.get(i * 2);
                 int probability = parent.getReproduceProbability();
 
                 if (random.nextInt(100) < probability) {
