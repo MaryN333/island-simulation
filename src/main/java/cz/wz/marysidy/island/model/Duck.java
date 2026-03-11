@@ -2,19 +2,20 @@ package cz.wz.marysidy.island.model;
 
 import java.util.Map;
 
-public class Fox extends Predator{
-    private static final double WEIGHT = 8;
-    private static final int MAX_SPEED = 2;
-    private static final double FOOD_REQUIRED = 2;
-    private static final int MAX_COUNT_PER_LOCATION = 30;
-    private static final double HUNGER_RATE = 0.12;
-    private static final int REPRODUCE_PROBABILITY = 35;
+public class Duck extends Herbivore {
+    private static final double WEIGHT = 1;
+    private static final int MAX_SPEED = 4;
+    private static final double FOOD_REQUIRED = 0.15;
+    private static final int MAX_COUNT_PER_LOCATION = 200;
+    private static final double HUNGER_RATE = 0.1;
+    private static final int REPRODUCE_PROBABILITY = 65;
     private static final Map<Class<? extends Organism>, Integer> FOOD_MAP =
-            Map.of(Rabbit.class, 70, Mouse.class, 90);
+            Map.of(Grass.class, 100, Caterpillar.class, 90);
 
-    public Fox() {
+    public Duck() {
         super(WEIGHT, MAX_SPEED, FOOD_REQUIRED);
     }
+
     @Override
     public int getMaxCountPerLocation() {
         return MAX_COUNT_PER_LOCATION;
@@ -27,7 +28,7 @@ public class Fox extends Predator{
 
     @Override
     protected Animal createChild() {
-        return new Fox();
+        return new Duck();
     }
 
     @Override

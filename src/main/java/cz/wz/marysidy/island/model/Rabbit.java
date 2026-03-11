@@ -9,17 +9,18 @@ public class Rabbit extends Herbivore {
     private static final double FOOD_REQUIRED = 0.45;
     private static final int MAX_COUNT_PER_LOCATION = 150;
     private static final double HUNGER_RATE = 0.15;
-    private static final int REPRODUCE_PROBABILITY = 60;
+    private static final int REPRODUCE_PROBABILITY = 75;
     private static final Map<Class<? extends Organism>, Integer> FOOD_MAP = new HashMap<>();
 
     static {
-        FOOD_MAP.put(Grass.class, 90);
+        FOOD_MAP.put(Grass.class, 100);
     }
 
     public Rabbit() {
         super(WEIGHT, MAX_SPEED, FOOD_REQUIRED);
     }
 
+    @Override
     public int getMaxCountPerLocation() {
         return MAX_COUNT_PER_LOCATION;
     }
@@ -31,7 +32,7 @@ public class Rabbit extends Herbivore {
 
     @Override
     protected Animal createChild() {
-        return new Mouse();
+        return new Rabbit();
     }
 
     @Override

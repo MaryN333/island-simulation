@@ -1,6 +1,5 @@
 package cz.wz.marysidy.island.model;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class Mouse extends Herbivore {
@@ -10,16 +9,14 @@ public class Mouse extends Herbivore {
     private static final int MAX_COUNT_PER_LOCATION = 500;
     private static final double HUNGER_RATE = 0.2;
     private static final int REPRODUCE_PROBABILITY = 65;
-    private static final Map<Class<? extends Organism>, Integer> FOOD_MAP = new HashMap<>();
-
-    static {
-        FOOD_MAP.put(Grass.class, 90);
-    }
+    private static final Map<Class<? extends Organism>, Integer> FOOD_MAP =
+            Map.of(Grass.class, 100, Caterpillar.class, 90);
 
     public Mouse() {
         super(WEIGHT, MAX_SPEED, FOOD_REQUIRED);
     }
 
+    @Override
     public int getMaxCountPerLocation() {
         return MAX_COUNT_PER_LOCATION;
     }
