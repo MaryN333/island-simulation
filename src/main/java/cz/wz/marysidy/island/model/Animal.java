@@ -114,8 +114,13 @@ public abstract class Animal implements Organism {
 
         if (foodSources.isEmpty()) return;
 
+        int attempts = 0;
+        int maxAttempts = 5;
+
         for (Organism food : foodSources) {
-            if (!isHungry()) return;
+            if (attempts >= maxAttempts) break;
+            if (!isHungry()) break;
+            attempts++;
 
             if (!food.isAlive()) continue;
             if (food == this) continue;
