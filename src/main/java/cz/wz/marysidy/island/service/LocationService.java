@@ -21,18 +21,36 @@ public class LocationService {
     }
 
     public void forEachLocation(Consumer<Location> action, boolean parallel) {
-
         if (!parallel) {
             island.forEachLocation(action);
             return;
         }
 
+        int height = island.getHeight();
+        int chunk = (int) Math.ceil((double) height / THREADS);
+
         List<Future<?>> futures = new ArrayList<>();
 
-        island.forEachLocation(location ->
-                futures.add(executor.submit(() -> action.accept(location)))
-        );
+        for (int t = 0; t < THREADS; t++) {
+            int startY = t * chunk;
+            int endY = Math.min(startY + chunk, height);
 
+            if (startY >= height) break;
+
+            futures.add(executor.submit(() -> {
+                Location[][] locations = island.getLocations();
+
+                for (int y = startY; y < endY; y++) {
+                    for (int x = 0; x < island.getWidth(); x++) {
+                        action.accept(locations[y][x]);
+                    }
+                }
+            }));
+        }
+        waitFutures(futures);
+    }
+
+    private void waitFutures(List<Future<?>> futures) {
         for (Future<?> future : futures) {
             try {
                 future.get();
