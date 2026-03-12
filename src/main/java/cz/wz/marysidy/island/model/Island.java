@@ -2,7 +2,6 @@ package cz.wz.marysidy.island.model;
 
 import cz.wz.marysidy.island.factory.OrganismFactory;
 
-import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -83,29 +82,29 @@ public class Island {
         }
     }
 
-    public Map<String, Integer> collectStatistics() {
-        Map<String, Integer> stats = new HashMap<>();
-        forEachLocation(location -> {
-            for (Animal animal : location.getAnimals()) {
-                if (!animal.isAlive()) continue;
-
-                String name = animal.getClass().getSimpleName();
-                stats.put(name, stats.getOrDefault(name, 0) + 1);
-            }
-
-            for (Plant plant : location.getPlants()) {
-                if (!plant.isAlive()) continue;
-
-                String name = plant.getClass().getSimpleName();
-                stats.put(name, stats.getOrDefault(name, 0) + 1);
-            }
-        });
-        return stats;
-    }
-
-    public void printStatistics(int tick) {
-        System.out.println("----- Tick " + tick + " -----");
-        collectStatistics().forEach((k, v) ->
-                System.out.println(k + ": " + v));
-    }
+//    public Map<String, Integer> collectStatistics() {
+//        Map<String, Integer> stats = new HashMap<>();
+//        forEachLocation(location -> {
+//            for (Animal animal : location.getAnimals()) {
+//                if (!animal.isAlive()) continue;
+//
+//                String name = animal.getClass().getSimpleName();
+//                stats.put(name, stats.getOrDefault(name, 0) + 1);
+//            }
+//
+//            for (Plant plant : location.getPlants()) {
+//                if (!plant.isAlive()) continue;
+//
+//                String name = plant.getClass().getSimpleName();
+//                stats.put(name, stats.getOrDefault(name, 0) + 1);
+//            }
+//        });
+//        return stats;
+//    }
+//
+//    public void printStatistics(int tick) {
+//        System.out.println("----- Tick " + tick + " -----");
+//        collectStatistics().forEach((k, v) ->
+//                System.out.println(k + ": " + v));
+//    }
 }
