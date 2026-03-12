@@ -20,12 +20,15 @@ public class LocationService {
         this.island = island;
     }
 
-    public void forEachLocation(Consumer<Location> action) {
-        island.forEachLocation(action);
-    }
+    public void forEachLocation(Consumer<Location> action, boolean parallel) {
 
-    public void parallelForEachLocation(Consumer<Location> action) {
+        if (!parallel) {
+            island.forEachLocation(action);
+            return;
+        }
+
         List<Future<?>> futures = new ArrayList<>();
+
         island.forEachLocation(location ->
                 futures.add(executor.submit(() -> action.accept(location)))
         );
