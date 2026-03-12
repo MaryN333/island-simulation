@@ -1,15 +1,11 @@
 package cz.wz.marysidy.island.phase;
 
 import cz.wz.marysidy.island.model.Island;
-import cz.wz.marysidy.island.service.LocationService;
+import cz.wz.marysidy.island.model.Location;
 
-public class ReproducePhase implements SimulationPhase {
+public class ReproducePhase extends AbstractPhase {
     @Override
-    public void execute(Island island, LocationService locationService, boolean parallel) {
-        if (parallel) {
-            locationService.forEachLocation(island::reproducePhase);
-        } else {
-            locationService.forEachLocation(island::reproducePhase);
-        }
+    protected void executeOnLocation(Island island, Location location) {
+        island.reproducePhase(location);
     }
 }
