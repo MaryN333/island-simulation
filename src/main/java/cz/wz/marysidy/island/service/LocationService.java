@@ -3,14 +3,18 @@ package cz.wz.marysidy.island.service;
 import cz.wz.marysidy.island.model.Island;
 import cz.wz.marysidy.island.model.Location;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.Future;
 import java.util.function.Consumer;
 
 public class LocationService {
     private final Island island;
     private static final int THREADS = Runtime.getRuntime().availableProcessors();
+    private final ExecutorService executor = Executors.newFixedThreadPool(THREADS);
 
     public LocationService(Island island) {
         this.island = island;
@@ -21,16 +25,23 @@ public class LocationService {
     }
 
     public void parallelForEachLocation(Consumer<Location> action) {
-        ExecutorService executor = Executors.newFixedThreadPool(THREADS);
+        List<Future<?>> futures = new ArrayList<>();
+        island.forEachLocation(location ->
+                futures.add(executor.submit(() -> action.accept(location)))
+        );
 
-        island.forEachLocation(location -> executor.submit(() -> action.accept(location)));
-        executor.shutdown();
-
-        try {
-            executor.awaitTermination(1, TimeUnit.MINUTES);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+        for (Future<?> future : futures) {
+            try {
+                future.get();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            } catch (ExecutionException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
+    public void shutdown() {
+        executor.shutdown();
+    }
 }
