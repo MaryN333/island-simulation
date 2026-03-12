@@ -84,10 +84,13 @@ public class Island {
     }
 
     public void plantGrowthPhase(Location location) {
-        int newPlants = ThreadLocalRandom.current()
-                .nextInt(Grass.MAX_COUNT_PER_LOCATION / 2, Grass.MAX_COUNT_PER_LOCATION);
+        int current = location.getPlants().size();
+        int max = Grass.MAX_COUNT_PER_LOCATION;
+        int freeSpace = max - current;
 
-        for (int i = 0; i < newPlants; i++) {
+        if (freeSpace <= 0) return;
+
+        for (int i = 0; i < freeSpace; i++) {
             location.addPlant(new Grass());
         }
     }
