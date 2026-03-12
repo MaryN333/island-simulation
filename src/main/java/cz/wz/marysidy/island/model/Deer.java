@@ -26,7 +26,7 @@ public class Deer extends Herbivore {
     }
 
     @Override
-    protected Animal createChild() {
+    public Animal createChild() {
         return new Deer();
     }
 
@@ -36,7 +36,7 @@ public class Deer extends Herbivore {
     }
 
     @Override
-    protected int getReproduceProbability() {
+    public int getReproduceProbability() {
         return REPRODUCE_PROBABILITY;
     }
 }

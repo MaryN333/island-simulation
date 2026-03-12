@@ -27,7 +27,7 @@ public class Anaconda extends Predator {
     }
 
     @Override
-    protected Animal createChild() {
+    public Animal createChild() {
         return new Anaconda();
     }
 
@@ -37,7 +37,7 @@ public class Anaconda extends Predator {
     }
 
     @Override
-    protected int getReproduceProbability() {
+    public int getReproduceProbability() {
         return REPRODUCE_PROBABILITY;
     }
 }

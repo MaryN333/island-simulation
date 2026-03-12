@@ -134,11 +134,11 @@ public abstract class Animal implements Organism {
         }
     }
 
-    protected abstract Animal createChild();
+    public abstract Animal createChild();
 
     protected abstract double getHungerRate();
 
-    protected abstract int getReproduceProbability();
+    public abstract int getReproduceProbability();
 
     protected abstract Map<Class<? extends Organism>, Integer> getFoodMap();
 

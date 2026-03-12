@@ -28,7 +28,7 @@ public class Wolf extends Predator {
     }
 
     @Override
-    protected Animal createChild() {
+    public Animal createChild() {
         return new Wolf();
     }
 
@@ -38,7 +38,7 @@ public class Wolf extends Predator {
     }
 
     @Override
-    protected int getReproduceProbability() {
+    public int getReproduceProbability() {
         return REPRODUCE_PROBABILITY;
     }
 }

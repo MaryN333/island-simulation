@@ -10,7 +10,7 @@ public class Fox extends Predator{
     private static final double HUNGER_RATE = 0.12;
     private static final int REPRODUCE_PROBABILITY = 35;
     private static final Map<Class<? extends Organism>, Integer> FOOD_MAP =
-            Map.of(Rabbit.class, 70, Mouse.class, 90);
+            Map.of(Rabbit.class, 70, Mouse.class, 90, Caterpillar.class, 40);
 
     public Fox() {
         super(WEIGHT, MAX_SPEED, FOOD_REQUIRED);
@@ -26,7 +26,7 @@ public class Fox extends Predator{
     }
 
     @Override
-    protected Animal createChild() {
+    public Animal createChild() {
         return new Fox();
     }
 
@@ -36,7 +36,7 @@ public class Fox extends Predator{
     }
 
     @Override
-    protected int getReproduceProbability() {
+    public int getReproduceProbability() {
         return REPRODUCE_PROBABILITY;
     }
 }

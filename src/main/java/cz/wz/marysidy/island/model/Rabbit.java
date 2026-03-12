@@ -31,7 +31,7 @@ public class Rabbit extends Herbivore {
     }
 
     @Override
-    protected Animal createChild() {
+    public Animal createChild() {
         return new Rabbit();
     }
 
@@ -41,7 +41,7 @@ public class Rabbit extends Herbivore {
     }
 
     @Override
-    protected int getReproduceProbability() {
+    public int getReproduceProbability() {
         return REPRODUCE_PROBABILITY;
     }
 }

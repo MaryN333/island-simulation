@@ -8,7 +8,7 @@ public class Duck extends Herbivore {
     private static final double FOOD_REQUIRED = 0.15;
     private static final int MAX_COUNT_PER_LOCATION = 200;
     private static final double HUNGER_RATE = 0.1;
-    private static final int REPRODUCE_PROBABILITY = 65;
+    private static final int REPRODUCE_PROBABILITY = 55;
     private static final Map<Class<? extends Organism>, Integer> FOOD_MAP =
             Map.of(Grass.class, 100, Caterpillar.class, 90);
 
@@ -27,7 +27,7 @@ public class Duck extends Herbivore {
     }
 
     @Override
-    protected Animal createChild() {
+    public Animal createChild() {
         return new Duck();
     }
 
@@ -37,7 +37,7 @@ public class Duck extends Herbivore {
     }
 
     @Override
-    protected int getReproduceProbability() {
+    public int getReproduceProbability() {
         return REPRODUCE_PROBABILITY;
     }
 }
