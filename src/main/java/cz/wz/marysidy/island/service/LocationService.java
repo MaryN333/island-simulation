@@ -1,5 +1,6 @@
 package cz.wz.marysidy.island.service;
 
+import cz.wz.marysidy.island.config.SimulationConfig;
 import cz.wz.marysidy.island.model.Island;
 import cz.wz.marysidy.island.model.Location;
 
@@ -13,8 +14,7 @@ import java.util.function.Consumer;
 
 public class LocationService {
     private final Island island;
-    private static final int THREADS = Runtime.getRuntime().availableProcessors();
-    private final ExecutorService executor = Executors.newFixedThreadPool(THREADS);
+    private final ExecutorService executor = Executors.newFixedThreadPool(SimulationConfig.THREADS);
 
     public LocationService(Island island) {
         this.island = island;
@@ -27,11 +27,11 @@ public class LocationService {
         }
 
         int height = island.getHeight();
-        int chunk = (int) Math.ceil((double) height / THREADS);
+        int chunk = (int) Math.ceil((double) height / SimulationConfig.THREADS);
 
         List<Future<?>> futures = new ArrayList<>();
 
-        for (int t = 0; t < THREADS; t++) {
+        for (int t = 0; t < SimulationConfig.THREADS; t++) {
             int startY = t * chunk;
             int endY = Math.min(startY + chunk, height);
 

@@ -1,5 +1,6 @@
 package cz.wz.marysidy.island.model;
 
+import cz.wz.marysidy.island.config.SimulationConfig;
 import cz.wz.marysidy.island.factory.OrganismFactory;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -66,8 +67,8 @@ public class Island {
         T sample = factory.get();
         int max = sample.getMaxCountPerLocation();
         // 2–5%
-        int min = Math.max(1, (int) (max * 0.02));
-        int upper = Math.max(min + 1, (int) (max * 0.05));
+        int min = Math.max(1, (int) (max * SimulationConfig.INITIAL_MIN_PERCENT));
+        int upper = Math.max(min + 1, (int) (max * SimulationConfig.INITIAL_MAX_PERCENT));
 
         int count = ThreadLocalRandom.current().nextInt(min, upper);
 
@@ -81,30 +82,4 @@ public class Island {
             }
         }
     }
-
-//    public Map<String, Integer> collectStatistics() {
-//        Map<String, Integer> stats = new HashMap<>();
-//        forEachLocation(location -> {
-//            for (Animal animal : location.getAnimals()) {
-//                if (!animal.isAlive()) continue;
-//
-//                String name = animal.getClass().getSimpleName();
-//                stats.put(name, stats.getOrDefault(name, 0) + 1);
-//            }
-//
-//            for (Plant plant : location.getPlants()) {
-//                if (!plant.isAlive()) continue;
-//
-//                String name = plant.getClass().getSimpleName();
-//                stats.put(name, stats.getOrDefault(name, 0) + 1);
-//            }
-//        });
-//        return stats;
-//    }
-//
-//    public void printStatistics(int tick) {
-//        System.out.println("----- Tick " + tick + " -----");
-//        collectStatistics().forEach((k, v) ->
-//                System.out.println(k + ": " + v));
-//    }
 }
