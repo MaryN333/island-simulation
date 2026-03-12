@@ -1,9 +1,6 @@
 package cz.wz.marysidy.island.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Location {
     private final int x;
@@ -30,11 +27,11 @@ public class Location {
     }
 
     public List<Animal> getAnimals() {
-        return animals;
+        return Collections.unmodifiableList(animals);
     }
 
     public List<Plant> getPlants() {
-        return plants;
+        return Collections.unmodifiableList(plants);
     }
 
     public boolean addAnimal(Animal animal) {
