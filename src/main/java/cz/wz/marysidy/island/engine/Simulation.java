@@ -1,8 +1,10 @@
 package cz.wz.marysidy.island.engine;
 
+import cz.wz.marysidy.island.config.SimulationConfig;
 import cz.wz.marysidy.island.model.Island;
 import cz.wz.marysidy.island.phase.*;
 import cz.wz.marysidy.island.service.LocationService;
+import cz.wz.marysidy.island.service.StatisticsService;
 
 import java.util.List;
 
@@ -11,6 +13,7 @@ public class Simulation implements SimulationEngine {
     private final int totalTicks;
     private final boolean parallel;
     private final LocationService locationService;
+    private final StatisticsService statisticsService;
 
     private final List<SimulationPhase> phases = List.of(
             new PlantGrowthPhase(),
@@ -26,6 +29,7 @@ public class Simulation implements SimulationEngine {
         this.totalTicks = totalTicks;
         this.parallel = parallel;
         this.locationService = new LocationService(island);
+        this.statisticsService = new StatisticsService();
     }
 
     @Override
@@ -35,21 +39,20 @@ public class Simulation implements SimulationEngine {
                 phase.execute(island, locationService, parallel);
             }
 
-            island.printStatistics(tick);
+            statisticsService.printStatistics(island, tick);
 
-            if (island.collectStatistics().isEmpty()) {
+            if (statisticsService.collectStatistics(island).isEmpty()) {
                 System.out.println("Simulation ended.");
                 break;
             }
 
             try {
-                Thread.sleep(200);
+                Thread.sleep(SimulationConfig.TICK_DELAY_MS);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 break;
             }
         }
-
         locationService.shutdown();
     }
 }
