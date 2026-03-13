@@ -9,7 +9,13 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class StatisticsService {
-    public Map<String, Integer> collectStatistics(Island island) {
+    private final Island island;
+
+    public StatisticsService(Island island) {
+        this.island = island;
+    }
+
+    public Map<String, Integer> collectStatistics() {
         Map<String, Integer> stats = new TreeMap<>();
 
         island.forEachLocation(location -> {
@@ -30,9 +36,10 @@ public class StatisticsService {
         return stats;
     }
 
-    public void printStatistics(Island island, int tick) {
+    public void printStatistics(int tick) {
         System.out.println("----- Tick " + tick + " -----");
-        collectStatistics(island).forEach((name, count) -> {
+        Map<String, Integer> stats = collectStatistics();
+        stats.forEach((name, count) -> {
             String emoji = EmojiRegistry.get(name);
             System.out.println(emoji + " " + name + ": " + count);
         });

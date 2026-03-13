@@ -7,6 +7,11 @@ import cz.wz.marysidy.island.service.LocationService;
 import cz.wz.marysidy.island.service.StatisticsService;
 
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Simulation implements SimulationEngine {
     private final Island island;
@@ -14,6 +19,10 @@ public class Simulation implements SimulationEngine {
     private final boolean parallel;
     private final LocationService locationService;
     private final StatisticsService statisticsService;
+
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private ScheduledFuture<?> simulationTask;
+    private final AtomicInteger tickCounter = new AtomicInteger(0);
 
     private final List<SimulationPhase> phases = List.of(
             new PlantGrowthPhase(),
@@ -29,30 +38,37 @@ public class Simulation implements SimulationEngine {
         this.totalTicks = totalTicks;
         this.parallel = parallel;
         this.locationService = new LocationService(island);
-        this.statisticsService = new StatisticsService();
+        this.statisticsService = new StatisticsService(island);
     }
 
     @Override
     public void runSimulation() {
-        for (int tick = 1; tick <= totalTicks; tick++) {
+        simulationTask = scheduler.scheduleAtFixedRate(() -> {
+            int tick = tickCounter.incrementAndGet();
+
+            if (tick > totalTicks) {
+                shutdown();
+                return;
+            }
+
             for (SimulationPhase phase : phases) {
                 phase.execute(island, locationService, parallel);
             }
 
-            statisticsService.printStatistics(island, tick);
+            statisticsService.printStatistics(tick);
 
-            if (statisticsService.collectStatistics(island).isEmpty()) {
+            if (statisticsService.collectStatistics().isEmpty()) {
                 System.out.println("Simulation ended.");
-                break;
+                shutdown();
             }
+        }, 0, SimulationConfig.TICK_DELAY_MS, TimeUnit.MILLISECONDS);
+    }
 
-            try {
-                Thread.sleep(SimulationConfig.TICK_DELAY_MS);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                break;
-            }
+    private void shutdown() {
+        if (simulationTask != null) {
+            simulationTask.cancel(false);
         }
+        scheduler.shutdown();
         locationService.shutdown();
     }
 }
