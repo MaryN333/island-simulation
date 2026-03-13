@@ -12,7 +12,18 @@ public class OrganismFactory {
                 Mouse::new,
                 Rabbit::new,
                 Fox::new,
-                Wolf::new
+                Wolf::new,
+                Caterpillar::new,
+                Duck::new,
+                Anaconda::new,
+                Bear::new,
+                Eagle::new,
+                Horse::new,
+                Deer::new,
+                Goat::new,
+                Sheep::new,
+                Boar::new,
+                Buffalo::new
         );
     }
 }
